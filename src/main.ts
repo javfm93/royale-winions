@@ -5,7 +5,9 @@ export interface iTroop {
   hitSpeed: number;
   currentHp: number;
   nextAttack: number;
+  isAlive: boolean;
   updateNextAttack(time: number): void;
+  receiveAttack(damage: number): void;
 }
 
 export class Troop implements iTroop {
@@ -27,6 +29,14 @@ export class Troop implements iTroop {
     const nextAttack = parseFloat((this.nextAttack - time).toFixed(1));
     this.nextAttack = nextAttack === 0.0 ? this.hitSpeed : nextAttack;
   }
+
+  public receiveAttack(damage: number): void {
+    this.hp -= damage;
+  }
+
+  get isAlive() {
+    return this.hp > 0;
+  }
 }
 export class Battle {
   private foreign: iTroop;
@@ -36,26 +46,25 @@ export class Battle {
 
   public vs(foreign: iTroop): iTroop {
     this.foreign = foreign;
-    return this.fight();
+    return this.fight(this.local, this.foreign);
   }
 
-  private fight(): iTroop {
-    while (this.local.hp > 0 && this.foreign.hp > 0) {
-      const isLocalAttack = this.local.nextAttack < this.foreign.nextAttack;
-      if (isLocalAttack) {
-        this.foreign.hp -= this.local.damage;
-        this.time += this.local.nextAttack;
-        this.foreign.updateNextAttack(this.local.nextAttack);
-        this.local.updateNextAttack(this.local.nextAttack);
-        console.log('Local Attack', this.time);
-      } else {
-        this.local.hp -= this.foreign.damage;
-        this.time += this.foreign.nextAttack;
-        this.local.updateNextAttack(this.foreign.nextAttack);
-        this.foreign.updateNextAttack(this.foreign.nextAttack);
-        console.log('Foreign Attack', this.time);
-      }
+  private fight(local: iTroop, foreign: iTroop): iTroop {
+    while (local.isAlive && foreign.isAlive) {
+      const isLocalAttack = local.nextAttack < foreign.nextAttack;
+      isLocalAttack
+        ? this.computeDamage(local, foreign)
+        : this.computeDamage(foreign, local);
     }
-    return this.local.hp > 0 ? this.local : this.foreign;
+    return local.hp > 0 ? local : foreign;
+  }
+
+  private computeDamage(attacker: iTroop, defender: iTroop) {
+    const timeToNextAttack = attacker.nextAttack;
+    defender.receiveAttack(attacker.damage);
+    this.time += timeToNextAttack;
+    defender.updateNextAttack(timeToNextAttack);
+    attacker.updateNextAttack(timeToNextAttack);
+    console.log('Local Attack', this.time);
   }
 }
