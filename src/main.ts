@@ -39,14 +39,13 @@ export class Troop implements iTroop {
   }
 }
 export class Battle {
-  private foreign: iTroop;
   private time: number = 0;
 
   constructor(private local: iTroop) {}
 
-  public vs(foreign: iTroop): iTroop {
-    this.foreign = foreign;
-    return this.fight(this.local, this.foreign);
+  public vs(foreign: iTroop): { winner: iTroop; time: number } {
+    const winner = this.fight(this.local, foreign);
+    return { winner, time: this.time };
   }
 
   private fight(local: iTroop, foreign: iTroop): iTroop {
@@ -56,7 +55,7 @@ export class Battle {
         ? this.computeDamage(local, foreign)
         : this.computeDamage(foreign, local);
     }
-    return local.hp > 0 ? local : foreign;
+    return local.isAlive ? local : foreign;
   }
 
   private computeDamage(attacker: iTroop, defender: iTroop) {
