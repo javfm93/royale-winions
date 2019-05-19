@@ -1,33 +1,61 @@
-/**
- * Some predefined delays (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
+export interface iTroop {
+  hp: number;
+  damage: number;
+  name: string;
+  hitSpeed: number;
+  currentHp: number;
+  nextAttack: number;
+  updateNextAttack(time: number): void;
 }
 
-/**
- * Returns a Promise<string> that resolves after given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - Number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
+export class Troop implements iTroop {
+  hp: number;
+  damage: number;
+  name: string;
+  hitSpeed: number;
+  currentHp: number;
+  nextAttack: number;
+  // tslint:disable-next-line:typedef
+  constructor({ hp, damage, name, hitSpeed }) {
+    this.nextAttack = this.hitSpeed = hitSpeed;
+    this.currentHp = this.hp = hp;
+    this.damage = damage;
+    this.name = name;
+  }
+
+  public updateNextAttack(time: number): void {
+    const nextAttack = parseFloat((this.nextAttack - time).toFixed(1));
+    this.nextAttack = nextAttack === 0.0 ? this.hitSpeed : nextAttack;
+  }
 }
+export class Battle {
+  private foreign: iTroop;
+  private time: number = 0;
 
-// Below are examples of using TSLint errors suppression
-// Here it is suppressing missing type definitions for greeter function
+  constructor(private local: iTroop) {}
 
-// tslint:disable-next-line typedef
-export async function greeter(name) {
-  // tslint:disable-next-line no-unsafe-any no-return-await
-  return await delayedHello(name, Delays.Long);
+  public vs(foreign: iTroop): iTroop {
+    this.foreign = foreign;
+    return this.fight();
+  }
+
+  private fight(): iTroop {
+    while (this.local.hp > 0 && this.foreign.hp > 0) {
+      const isLocalAttack = this.local.nextAttack < this.foreign.nextAttack;
+      if (isLocalAttack) {
+        this.foreign.hp -= this.local.damage;
+        this.time += this.local.nextAttack;
+        this.foreign.updateNextAttack(this.local.nextAttack);
+        this.local.updateNextAttack(this.local.nextAttack);
+        console.log('Local Attack', this.time);
+      } else {
+        this.local.hp -= this.foreign.damage;
+        this.time += this.foreign.nextAttack;
+        this.local.updateNextAttack(this.foreign.nextAttack);
+        this.foreign.updateNextAttack(this.foreign.nextAttack);
+        console.log('Foreign Attack', this.time);
+      }
+    }
+    return this.local.hp > 0 ? this.local : this.foreign;
+  }
 }
