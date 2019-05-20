@@ -28,7 +28,7 @@ export class Troop implements iTroop {
   public updateNextAttack(time: number): void {
     const nextAttack = parseFloat((this.nextAttack - time).toFixed(1));
     this.nextAttack = nextAttack === 0.0 ? this.hitSpeed : nextAttack;
-  }
+  }tgfrtgfrtgfrtgrtgrftgftrtgfrwesrdghjkl,mjhgftdreswqertfgyhj
 
   public receiveAttack(damage: number): void {
     this.hp -= damage;
@@ -50,12 +50,22 @@ export class Battle {
 
   private fight(local: iTroop, foreign: iTroop): iTroop {
     while (local.isAlive && foreign.isAlive) {
+      this.checkAttacker(local, foreign);
+    }
+    return local.isAlive ? local : foreign;
+  }
+
+  private checkAttacker(local: iTroop, foreign: iTroop) {
+    const isReciprocalAttack = local.nextAttack === foreign.nextAttack;
+    if (isReciprocalAttack) {
+      this.computeDamage(local, foreign);
+      this.computeDamage(foreign, local);
+    } else {
       const isLocalAttack = local.nextAttack < foreign.nextAttack;
       isLocalAttack
         ? this.computeDamage(local, foreign)
         : this.computeDamage(foreign, local);
     }
-    return local.isAlive ? local : foreign;
   }
 
   private computeDamage(attacker: iTroop, defender: iTroop) {
