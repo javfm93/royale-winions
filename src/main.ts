@@ -28,7 +28,7 @@ export class Troop implements iTroop {
   public updateNextAttack(time: number): void {
     const nextAttack = parseFloat((this.nextAttack - time).toFixed(1));
     this.nextAttack = nextAttack === 0.0 ? this.hitSpeed : nextAttack;
-  }tgfrtgfrtgfrtgrtgrftgftrtgfrwesrdghjkl,mjhgftdreswqertfgyhj
+  }
 
   public receiveAttack(damage: number): void {
     this.hp -= damage;
