@@ -1,15 +1,17 @@
-import { Troop, Battle, iTroop } from './../src/main';
-import troop from './fixtures/troop';
+import { Battle } from './../src/battle';
+import { BasicTroop } from './../src/troop/basicTroop';
+import { Troop } from '../src/troop/troop';
+import troops from './fixtures/troops';
 import { checkWinner } from './helpers';
 
 describe('Troops', () => {
   describe('One Card Battle', () => {
     describe('Individual troop', () => {
-      let miniPekka: iTroop, knight: iTroop, musketeer: iTroop;
+      let miniPekka: Troop, knight: Troop, musketeer: Troop;
       beforeEach(() => {
-        miniPekka = new Troop(troop.miniPekka);
-        knight = new Troop(troop.knight);
-        musketeer = new Troop(troop.musketeer);
+        miniPekka = new BasicTroop(troops.miniPekka);
+        knight = new BasicTroop(troops.knight);
+        musketeer = new BasicTroop(troops.musketeer);
       });
       it('Melee vs Melee Battle - Wins First', () => {
         const { winner, time } = new Battle(miniPekka).vs(knight);
