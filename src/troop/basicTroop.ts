@@ -20,15 +20,15 @@ export class BasicTroop implements Troop {
   }
 
   public updateNextAttack(time: number): void {
-    const nextAttack = parseFloat((this.nextAttack - time).toFixed(1))
-    this.nextAttack = nextAttack === 0.0 ? this.hitSpeed : nextAttack
+    const nextAttack = this.nextAttack - time
+    this.nextAttack = nextAttack <= 0 ? this.hitSpeed : nextAttack
   }
 
   public receiveAttack(damage: number): void {
-    this.hp -= damage
+    this.currentHp -= damage
   }
 
-  get isAlive() {
-    return this.hp > 0
+  get isAlive(): boolean {
+    return this.currentHp > 0
   }
 }

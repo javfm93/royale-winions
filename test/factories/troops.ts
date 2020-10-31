@@ -1,3 +1,63 @@
+import { BasicTroop } from "../../src/troop/basicTroop"
+import * as faker from "faker"
+import { Troop, TroopProperties } from "../../src/troop/troop"
+
+enum HP {
+  MAX = 2000,
+  MIN_STRONG = 1500,
+  MAX_WEAK = 1000,
+  MIN = 200
+}
+
+enum DAMAGE {
+  MAX = 1000,
+  MIN_STRONG = 800,
+  MAX_WEAK = 300,
+  MIN = 10
+}
+
+enum HIT_SPEED {
+  MAX = 2,
+  MIN = 1
+}
+
+export const basicTroopPropertiesGenerator = (): TroopProperties => ({
+  name: faker.name.jobType(),
+  hp: faker.random.number({ min: HP.MIN, max: HP.MAX }),
+  damage: faker.random.number({ min: DAMAGE.MAX, max: DAMAGE.MIN }),
+  hitSpeed: faker.random.number({ min: HIT_SPEED.MIN, max: HIT_SPEED.MAX, precision: 0.1 }),
+  range: faker.random.number(9),
+  speed: faker.random.number({ min: 0.875, max: 1.5, precision: 0.1 }),
+})
+
+export const basicTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+  const defaultProps = basicTroopPropertiesGenerator()
+  return new BasicTroop({ ...defaultProps, ...props })
+}
+
+export const basicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop =>
+  basicTroopFactory({ ...props, range: 0 })
+
+export const strongBasicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+  const strongProps: Partial<TroopProperties> = {
+    hp: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
+    damage: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
+    range: 0,
+  }
+
+  return basicTroopFactory({ ...props, ...strongProps })
+}
+
+export const weakBasicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+  const strongProps: Partial<TroopProperties> = {
+    hp: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
+    damage: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
+    range: 0,
+  }
+
+  return basicTroopFactory({ ...props, ...strongProps })
+}
+
 export default {
   knight: {
     name: 'knight',
@@ -186,4 +246,4 @@ export default {
     deployTime: 1,
     count: 4,
   },
-};
+}
