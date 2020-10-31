@@ -1,5 +1,8 @@
 import { Troop } from '../../src/troop/troop'
-import { MeleeBasicTroopsFixtures } from "../../src/battle.test"
+
+interface MeleeBasicTroopsFixtures {
+  winner: Troop, looser: Troop
+}
 
 export const checkWinner = (name: string, hp: number, winner: Troop): void => {
   expect(winner.name).toBe(name)

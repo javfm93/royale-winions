@@ -3,6 +3,7 @@ import { BasicTroop } from './troop/basicTroop'
 import { Troop } from './troop/troop'
 import troops from "../test/factories/troops"
 import { checkWinner } from "../test/helpers"
+import { fightEngine } from "./fightEngine"
 
 describe('Battle', () => {
   describe('One Card Battle', () => {
@@ -15,19 +16,19 @@ describe('Battle', () => {
       })
 
       it('Melee vs Melee Battle - Wins First', () => {
-        const { winner, time } = new Battle(miniPekka).vs(knight)
+        const { winner, time } = new Battle(miniPekka, fightEngine).vs(knight)
         checkWinner(miniPekka.name, 300, winner)
         expect(time).toBe(5.4)
       })
 
       it('Melee vs Melee Battle - Wins Second', () => {
-        const { winner, time } = new Battle(knight).vs(miniPekka)
+        const { winner, time } = new Battle(knight, fightEngine).vs(miniPekka)
         checkWinner(miniPekka.name, 300, winner)
         expect(time).toBe(5.4)
       })
 
-      xit('Melee vs Range Battle', () => {
-        const { winner, time } = new Battle(knight).vs(musketeer)
+      it.skip('Melee vs Range Battle', () => {
+        const { winner, time } = new Battle(knight, fightEngine).vs(musketeer)
         checkWinner(musketeer.name, 190, winner)
         expect(time).toBe(7.7)
       })

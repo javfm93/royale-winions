@@ -3,10 +3,10 @@ import {
   strongBasicMeleeTroopFactory,
   weakBasicMeleeTroopFactory
 } from "../test/factories/troops"
-import { checkWinner, expectedFightResults } from "../test/helpers"
 import { Troop } from "./troop/troop"
+import { FightEngine } from "./fightEngine"
 
-export interface MeleeBasicTroopsFixtures {
+interface MeleeBasicTroopsFixtures {
   winner: Troop, looser: Troop
 }
 
@@ -20,28 +20,36 @@ describe('Battle', () => {
         const looserMeleeTroop = weakBasicMeleeTroopFactory()
         meleeBasicTroops = { winner: winnerMeleeTroop, looser: looserMeleeTroop }
       })
+      const timeReturnedPerIteration = 10
+      const iterations = 3
+      const killLocalAfter3Iterations = (local: Troop): number => {
+        local.receiveAttack(local.hp / 2 - 1)
+        return timeReturnedPerIteration
+      }
 
-      it('Melee vs Melee Battle - Wins First', () => {
-        const { winner, time } = new Battle(meleeBasicTroops.winner).vs(meleeBasicTroops.looser)
+      test("call fightIterations until one troop is not alive", () => {
+        const fightEngine: FightEngine = { fightIteration: jest.fn().mockImplementation(killLocalAfter3Iterations) }
 
-        const { expectedFightTime, expectedWinnerHp } = expectedFightResults(meleeBasicTroops)
-        checkWinner(meleeBasicTroops.winner.name, expectedWinnerHp, winner)
-        expect(time).toBe(expectedFightTime)
+        new Battle(meleeBasicTroops.looser, fightEngine).vs(meleeBasicTroops.winner)
+
+        expect(fightEngine.fightIteration).toBeCalledTimes(iterations)
       })
 
-      it('Melee vs Melee Battle - Wins Second', () => {
-        const { winner, time } = new Battle(meleeBasicTroops.looser).vs(meleeBasicTroops.winner)
+      test("return the sum of the time of all the iterations ", () => {
+        const fightEngine: FightEngine = { fightIteration: jest.fn().mockImplementation(killLocalAfter3Iterations) }
 
-        const { expectedFightTime, expectedWinnerHp } = expectedFightResults(meleeBasicTroops)
-        checkWinner(meleeBasicTroops.winner.name, expectedWinnerHp, winner)
-        expect(time).toBe(expectedFightTime)
+        const { time } = new Battle(meleeBasicTroops.looser, fightEngine).vs(meleeBasicTroops.winner)
+
+        expect(time).toBe(timeReturnedPerIteration * iterations)
       })
 
-      // it('Melee vs Range Battle', () => {
-      //   const { winner, time } = new Battle(knight).vs(musketeer)
-      //   checkWinner(musketeer.name, 190, winner)
-      //   expect(time).toBe(7.7)
-      // })
+      test('return the winner', () => {
+        const fightEngine: FightEngine = { fightIteration: jest.fn().mockImplementation(killLocalAfter3Iterations) }
+
+        const { winner } = new Battle(meleeBasicTroops.looser, fightEngine).vs(meleeBasicTroops.winner)
+
+        expect(winner).toStrictEqual(meleeBasicTroops.winner)
+      })
     })
   })
 })
