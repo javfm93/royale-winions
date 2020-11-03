@@ -1,6 +1,6 @@
 import { BasicTroop } from "../../src/troop/basicTroop"
 import * as faker from "faker"
-import { Troop, TroopProperties } from "../../src/troop/troop"
+import { Surface, Troop, TroopProperties } from "../../src/troop/troop"
 
 enum HP {
   MAX = 2000,
@@ -28,6 +28,7 @@ export const basicTroopPropertiesGenerator = (): TroopProperties => ({
   hitSpeed: faker.random.number({ min: HIT_SPEED.MIN, max: HIT_SPEED.MAX, precision: 0.1 }),
   range: faker.random.number(9),
   speed: faker.random.number({ min: 0.875, max: 1.5, precision: 0.1 }),
+  surface: faker.random.arrayElement(Object.values(Surface))
 })
 
 export const basicTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
@@ -35,48 +36,49 @@ export const basicTroopFactory = (props: Partial<TroopProperties> = {}): Troop =
   return new BasicTroop({ ...defaultProps, ...props })
 }
 
-export const basicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop =>
-  basicTroopFactory({ ...props, range: 1 })
+export const basicMeleeGroundTroopFactory = (props: Partial<TroopProperties> = {}): Troop =>
+  basicTroopFactory({ ...props, range: 1, surface: Surface.Ground })
 
-export const strongBasicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+export const strongBasicGroundMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   const strongProps: Partial<TroopProperties> = {
     hp: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
     damage: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
   }
 
-  return basicMeleeTroopFactory({ ...props, ...strongProps })
+  return basicMeleeGroundTroopFactory({ ...props, ...strongProps })
 }
 
-export const weakBasicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+export const weakBasicGroundMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   const strongProps: Partial<TroopProperties> = {
     hp: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
     damage: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
   }
 
-  return basicMeleeTroopFactory({ ...props, ...strongProps })
+  return basicMeleeGroundTroopFactory({ ...props, ...strongProps })
 }
 
-export const basicRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+export const basicGroundRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   if (props.range <= 1) throw Error("Not a ranged troop")
-  return basicTroopFactory({ range: faker.random.number({ min: 2, max: 9 }), ...props, })
+  const range = faker.random.number({ min: 2, max: 9 })
+  return basicTroopFactory({ range, ...props, surface: Surface.Ground })
 }
 
-export const strongBasicRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+export const strongBasicGroundRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   const strongProps: Partial<TroopProperties> = {
     hp: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
     damage: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
   }
 
-  return basicRangedTroopFactory({ ...props, ...strongProps })
+  return basicGroundRangedTroopFactory({ ...props, ...strongProps })
 }
 
-export const weakBasicRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+export const weakBasicGroundRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   const strongProps: Partial<TroopProperties> = {
     hp: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
     damage: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
   }
 
-  return basicRangedTroopFactory({ ...props, ...strongProps })
+  return basicGroundRangedTroopFactory({ ...props, ...strongProps })
 }
 
 export default {

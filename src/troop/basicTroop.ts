@@ -1,4 +1,4 @@
-import { Troop } from './troop'
+import { Surface, Troop } from './troop'
 
 export class BasicTroop implements Troop {
   name: string;
@@ -9,22 +9,24 @@ export class BasicTroop implements Troop {
   currentHp: number;
   nextAttack: number;
   speed: number;
+  surface: Surface
 
-  constructor({ hp, damage, name, hitSpeed, range, speed }) {
+  constructor({ hp, damage, name, hitSpeed, range, speed, surface }) {
     this.name = name
     this.currentHp = this.hp = hp
     this.damage = damage
     this.nextAttack = this.hitSpeed = hitSpeed
     this.range = range
     this.speed = speed
+    this.surface = surface
   }
 
-  public updateNextAttack(time: number): void {
+  public reduceNextAttackTimeBy(time: number): void {
     const nextAttack = this.nextAttack - time
     this.nextAttack = nextAttack <= 0 ? this.hitSpeed : nextAttack
   }
 
-  public receiveAttack(damage: number): void {
+  public receiveDamage(damage: number): void {
     this.currentHp -= damage
   }
 

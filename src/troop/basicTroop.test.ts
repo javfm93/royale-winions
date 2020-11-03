@@ -1,6 +1,6 @@
 import { BasicTroop } from "./basicTroop"
 import {
-  basicMeleeTroopFactory,
+  basicMeleeGroundTroopFactory,
   basicTroopPropertiesGenerator,
 } from "../../test/factories/troops"
 
@@ -16,31 +16,31 @@ describe('Basic Troop', () => {
     let basicTroop: BasicTroop
 
     beforeEach(() => {
-      basicTroop = basicMeleeTroopFactory()
+      basicTroop = basicMeleeGroundTroopFactory()
     })
 
     test('when a troop received damage it reduces the current HP', () => {
       const damageDealt = 100
       const initialHp = basicTroop.hp
-      basicTroop.receiveAttack(100)
+      basicTroop.receiveDamage(100)
 
       expect(basicTroop.currentHp).toBe(initialHp - damageDealt)
     })
 
     test('when a troop less damage than hp it still alive', () => {
-      basicTroop.receiveAttack(basicTroop.hp / 2)
+      basicTroop.receiveDamage(basicTroop.hp / 2)
 
       expect(basicTroop.isAlive).toBe(true)
     })
 
     test('when a troop received the same damage than hp it returns is not alive', () => {
-      basicTroop.receiveAttack(basicTroop.hp)
+      basicTroop.receiveDamage(basicTroop.hp)
 
       expect(basicTroop.isAlive).toBe(false)
     })
 
     test('when a troop received more damage than hp it returns is not alive', () => {
-      basicTroop.receiveAttack(basicTroop.hp + 1)
+      basicTroop.receiveDamage(basicTroop.hp + 1)
 
       expect(basicTroop.isAlive).toBe(false)
     })
@@ -48,19 +48,19 @@ describe('Basic Troop', () => {
     test('when time passes, the time to next attack reduces', () => {
       const timePassed = (basicTroop.hitSpeed / 2)
 
-      basicTroop.updateNextAttack(timePassed)
+      basicTroop.reduceNextAttackTimeBy(timePassed)
 
       expect(basicTroop.nextAttack).toBe(basicTroop.hitSpeed - timePassed)
     })
 
     test('when passes the same time than needed to next attack, next attack is set to hitSpeed', () => {
-      basicTroop.updateNextAttack(basicTroop.hitSpeed)
+      basicTroop.reduceNextAttackTimeBy(basicTroop.hitSpeed)
 
       expect(basicTroop.nextAttack).toBe(basicTroop.hitSpeed)
     })
 
     test('when passes more time than needed to next attack, next attack is set to hitSpeed', () => {
-      basicTroop.updateNextAttack(basicTroop.hitSpeed + 1)
+      basicTroop.reduceNextAttackTimeBy(basicTroop.hitSpeed + 1)
 
       expect(basicTroop.nextAttack).toBe(basicTroop.hitSpeed)
     })

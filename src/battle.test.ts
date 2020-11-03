@@ -1,7 +1,7 @@
 import { Battle } from './battle'
 import {
-  strongBasicMeleeTroopFactory,
-  weakBasicMeleeTroopFactory
+  strongBasicGroundMeleeTroopFactory,
+  weakBasicGroundMeleeTroopFactory
 } from "../test/factories/troops"
 import { Troop } from "./troop/troop"
 import { FightEngine } from "./fightEngine"
@@ -22,13 +22,13 @@ describe('Battle', () => {
       const timeReturnedPerRangeDamage = 10
       const iterations = 3
       const killLocalAfter3Iterations = (local: Troop): number => {
-        local.receiveAttack(local.hp / 2 - 1)
+        local.receiveDamage(local.hp / 2 - 1)
         return timeReturnedPerIteration
       }
 
       beforeEach(() => {
-        const winnerMeleeTroop = strongBasicMeleeTroopFactory()
-        const looserMeleeTroop = weakBasicMeleeTroopFactory()
+        const winnerMeleeTroop = strongBasicGroundMeleeTroopFactory()
+        const looserMeleeTroop = weakBasicGroundMeleeTroopFactory()
         meleeBasicTroops = { winner: winnerMeleeTroop, looser: looserMeleeTroop }
         fightEngineMock = {
           fightIteration: jest.fn().mockImplementation(killLocalAfter3Iterations),

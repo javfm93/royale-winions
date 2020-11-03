@@ -1,13 +1,18 @@
 import { fightEngine } from "./fightEngine"
-import { strongBasicMeleeTroopFactory, weakBasicRangedTroopFactory } from "../test/factories/troops"
+import {
+  basicTroopFactory,
+  strongBasicGroundMeleeTroopFactory,
+  weakBasicGroundRangedTroopFactory
+} from "../test/factories/troops"
 import { calculateDamagePerRange, calculateTimeToArrive } from "../test/helpers"
 import * as faker from "faker"
+import { Surface } from "./troop/troop"
 
 describe("fightEngine", () => {
   describe("Given 2 troops that are in range [fightIteration]", () => {
-    test('it doesnt apply range damge', () => {
-      const local = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
-      const foreign = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+    test('it doesnt apply range damage', () => {
+      const local = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
+      const foreign = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
       const timeToApplyRangeDamage = fightEngine.computeDamagePerRange(local, foreign)
 
@@ -18,8 +23,8 @@ describe("fightEngine", () => {
 
     describe("Given 2 troops with same hitSpeed", () => {
       test("The time returned is hitSpeed", () => {
-        const local = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
-        const foreign = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const local = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
+        const foreign = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(local, foreign)
         const iterationTime = fightEngine.fightIteration(local, foreign)
@@ -27,8 +32,8 @@ describe("fightEngine", () => {
         expect(iterationTime).toBe(2)
       })
       test("Both troops are damaged", () => {
-        const local = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
-        const foreign = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const local = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
+        const foreign = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(local, foreign)
 
@@ -39,8 +44,8 @@ describe("fightEngine", () => {
 
     describe("Given a troop that is faster than the other", () => {
       test("When faster hits slower troop is damaged", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1.5 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1.5 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(faster, slower)
 
@@ -49,8 +54,8 @@ describe("fightEngine", () => {
       })
 
       test("When faster hits slower troop is damaged (reverse)", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1.5 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1.5 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(slower, faster)
 
@@ -59,8 +64,8 @@ describe("fightEngine", () => {
       })
 
       test("When we have 2 iterations both hit once", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1.5 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1.5 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(faster, slower)
         fightEngine.fightIteration(faster, slower)
@@ -70,8 +75,8 @@ describe("fightEngine", () => {
       })
 
       test("it returns the time passed in the iteration", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         const iterationTime = fightEngine.fightIteration(faster, slower)
 
@@ -79,8 +84,8 @@ describe("fightEngine", () => {
       })
 
       test("it returns the time passed in the iteration (reverse)", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         const iterationTime = fightEngine.fightIteration(faster, slower)
 
@@ -88,8 +93,8 @@ describe("fightEngine", () => {
       })
 
       test("When we are in the second iteration it returns the time left to hit of the other troop", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1.5 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1.5 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(faster, slower)
         const iterationTime = fightEngine.fightIteration(faster, slower)
@@ -98,8 +103,8 @@ describe("fightEngine", () => {
       })
 
       test("When we are in the second iteration it returns the time left to hit of the other troop (reverse)", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 1.5 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 1.5 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(slower, faster)
         const iterationTime = fightEngine.fightIteration(slower, faster)
@@ -110,8 +115,8 @@ describe("fightEngine", () => {
 
     describe("Given a troop which hits twice before the other", () => {
       test("Slower its damaged", () => {
-        const faster = strongBasicMeleeTroopFactory({ hitSpeed: 0.5 })
-        const slower = strongBasicMeleeTroopFactory({ hitSpeed: 2 })
+        const faster = strongBasicGroundMeleeTroopFactory({ hitSpeed: 0.5 })
+        const slower = strongBasicGroundMeleeTroopFactory({ hitSpeed: 2 })
 
         fightEngine.fightIteration(faster, slower)
         fightEngine.fightIteration(faster, slower)
@@ -124,8 +129,8 @@ describe("fightEngine", () => {
 
   describe("Given 2 troops with different range [computeDamagePerRange]", () => {
     test("Troop with more range damage the other until it arrives", () => {
-      const ranged = weakBasicRangedTroopFactory()
-      const melee = strongBasicMeleeTroopFactory()
+      const ranged = weakBasicGroundRangedTroopFactory()
+      const melee = strongBasicGroundMeleeTroopFactory()
 
       fightEngine.computeDamagePerRange(ranged, melee)
 
@@ -134,8 +139,8 @@ describe("fightEngine", () => {
     })
 
     test("Troop with more range damage the other until it arrives (reverse)", () => {
-      const ranged = weakBasicRangedTroopFactory()
-      const melee = strongBasicMeleeTroopFactory()
+      const ranged = weakBasicGroundRangedTroopFactory()
+      const melee = strongBasicGroundMeleeTroopFactory()
 
       fightEngine.computeDamagePerRange(melee, ranged)
 
@@ -144,8 +149,8 @@ describe("fightEngine", () => {
     })
 
     test("it returns the time passed until defender arrives", () => {
-      const ranged = weakBasicRangedTroopFactory({ range: faker.random.number({ min: 2, max: 4 }) })
-      const melee = strongBasicMeleeTroopFactory()
+      const ranged = weakBasicGroundRangedTroopFactory({ range: faker.random.number({ min: 2, max: 4 }) })
+      const melee = strongBasicGroundMeleeTroopFactory()
 
       const timeToArrive = fightEngine.computeDamagePerRange(ranged, melee)
 
@@ -153,12 +158,34 @@ describe("fightEngine", () => {
     })
 
     test("it returns the time passed until defender arrives (reverse)", () => {
-      const ranged = weakBasicRangedTroopFactory({ range: faker.random.number({ min: 2, max: 4 }) })
-      const melee = strongBasicMeleeTroopFactory()
+      const ranged = weakBasicGroundRangedTroopFactory({ range: faker.random.number({ min: 2, max: 4 }) })
+      const melee = strongBasicGroundMeleeTroopFactory()
 
       const timeToArrive = fightEngine.computeDamagePerRange(melee, ranged)
 
       expect(timeToArrive).toBe(calculateTimeToArrive(ranged, melee))
+    })
+  })
+
+  describe("Given on air troop versus a ground melee troop", () => {
+    test("Ground troop is not able to hit air troop", () => {
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air })
+      const melee = basicTroopFactory({ hitSpeed: 0.5, surface: Surface.Ground })
+
+      fightEngine.fightIteration(air, melee)
+
+      expect(melee.currentHp).toBe(melee.hp - air.damage)
+      expect(air.currentHp).toBe(air.hp)
+    })
+
+    test("Ground troop is not able to hit air troop (reverse)", () => {
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air })
+      const melee = basicTroopFactory({ hitSpeed: 0.5, surface: Surface.Ground })
+
+      fightEngine.fightIteration(melee, air)
+
+      expect(melee.currentHp).toBe(melee.hp - air.damage)
+      expect(air.currentHp).toBe(air.hp)
     })
   })
 })

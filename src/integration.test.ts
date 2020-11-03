@@ -1,9 +1,9 @@
 import { Battle, round } from './battle'
 import {
   basicTroopFactory,
-  strongBasicMeleeTroopFactory, strongBasicRangedTroopFactory,
+  strongBasicGroundMeleeTroopFactory, strongBasicGroundRangedTroopFactory,
   // strongBasicRangedTroopFactory,
-  weakBasicMeleeTroopFactory,
+  weakBasicGroundMeleeTroopFactory,
   // weakBasicRangedTroopFactory
 } from "../test/factories/troops"
 import { calculateDamagePerRange, checkWinner, expectedFightResults } from "../test/helpers"
@@ -21,8 +21,8 @@ describe('Battle', () => {
       // let rangedBasicTroops: BasicTroopsFixtures
 
       beforeEach(() => {
-        const strongMeleeTroop = strongBasicMeleeTroopFactory()
-        const weakMeleeTroop = weakBasicMeleeTroopFactory()
+        const strongMeleeTroop = strongBasicGroundMeleeTroopFactory()
+        const weakMeleeTroop = weakBasicGroundMeleeTroopFactory()
         meleeBasicTroops = { winner: strongMeleeTroop, looser: weakMeleeTroop }
 
         // const strongRangedTroop = strongBasicRangedTroopFactory()
@@ -47,8 +47,8 @@ describe('Battle', () => {
       })
 
       test('Range vs Melee Battle - Wins First', () => {
-        const ranged = strongBasicRangedTroopFactory({ range: 3 })
-        const melee = strongBasicMeleeTroopFactory({ speed: 0.5 })
+        const ranged = strongBasicGroundRangedTroopFactory({ range: 3 })
+        const melee = strongBasicGroundMeleeTroopFactory({ speed: 0.5 })
         const rangeDamage = calculateDamagePerRange(ranged, melee)
         const damagedMelee = basicTroopFactory({ ...melee, hp: melee.hp - rangeDamage })
 
