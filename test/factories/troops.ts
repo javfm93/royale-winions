@@ -36,26 +36,47 @@ export const basicTroopFactory = (props: Partial<TroopProperties> = {}): Troop =
 }
 
 export const basicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop =>
-  basicTroopFactory({ ...props, range: 0 })
+  basicTroopFactory({ ...props, range: 1 })
 
 export const strongBasicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   const strongProps: Partial<TroopProperties> = {
     hp: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
     damage: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
-    range: 0,
   }
 
-  return basicTroopFactory({ ...props, ...strongProps })
+  return basicMeleeTroopFactory({ ...props, ...strongProps })
 }
 
 export const weakBasicMeleeTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
   const strongProps: Partial<TroopProperties> = {
     hp: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
     damage: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
-    range: 0,
   }
 
-  return basicTroopFactory({ ...props, ...strongProps })
+  return basicMeleeTroopFactory({ ...props, ...strongProps })
+}
+
+export const basicRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+  if (props.range <= 1) throw Error("Not a ranged troop")
+  return basicTroopFactory({ range: faker.random.number({ min: 2, max: 9 }), ...props, })
+}
+
+export const strongBasicRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+  const strongProps: Partial<TroopProperties> = {
+    hp: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
+    damage: faker.random.number({ min: HP.MIN_STRONG, max: HP.MAX }),
+  }
+
+  return basicRangedTroopFactory({ ...props, ...strongProps })
+}
+
+export const weakBasicRangedTroopFactory = (props: Partial<TroopProperties> = {}): Troop => {
+  const strongProps: Partial<TroopProperties> = {
+    hp: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
+    damage: faker.random.number({ min: HP.MIN, max: HP.MAX_WEAK }),
+  }
+
+  return basicRangedTroopFactory({ ...props, ...strongProps })
 }
 
 export default {
@@ -71,7 +92,7 @@ export default {
     damagePerSecond: 68,
     surface: 'Ground',
     target: 'Ground',
-    range: 0,
+    range: 1,
     speed: 0.875,
     deployTime: 1,
     count: 1,
@@ -88,7 +109,7 @@ export default {
     damagePerSecond: 180,
     surface: 'Ground',
     target: 'Ground',
-    range: 0,
+    range: 1,
     speed: 0.625,
     deployTime: 1,
     count: 1,
@@ -173,7 +194,7 @@ export default {
     damagePerSecond: 32,
     surface: 'Ground',
     target: 'Ground',
-    range: 0,
+    range: 1,
     speed: 0.625,
     deployTime: 1,
     count: 4,
@@ -190,7 +211,7 @@ export default {
     damagePerSecond: 45,
     surface: 'Ground',
     target: 'Ground',
-    range: 0,
+    range: 1,
     speed: 0.375,
     deployTime: 1,
     count: 3,
@@ -241,7 +262,7 @@ export default {
     damagePerSecond: 50,
     surface: 'Ground',
     target: 'Ground',
-    range: 0,
+    range: 1,
     speed: 0.875,
     deployTime: 1,
     count: 4,

@@ -1,28 +1,36 @@
-import { Battle } from './battle'
+import { Battle, round } from './battle'
 import {
-  strongBasicMeleeTroopFactory,
-  weakBasicMeleeTroopFactory
+  basicTroopFactory,
+  strongBasicMeleeTroopFactory, strongBasicRangedTroopFactory,
+  // strongBasicRangedTroopFactory,
+  weakBasicMeleeTroopFactory,
+  // weakBasicRangedTroopFactory
 } from "../test/factories/troops"
-import { checkWinner, expectedFightResults } from "../test/helpers"
+import { calculateDamagePerRange, checkWinner, expectedFightResults } from "../test/helpers"
 import { Troop } from "./troop/troop"
 import { fightEngine } from "./fightEngine"
 
-interface MeleeBasicTroopsFixtures {
+interface BasicTroopsFixtures {
   winner: Troop, looser: Troop
 }
 
 describe('Battle', () => {
   describe('One Card Battle', () => {
     describe('Individual troop', () => {
-      let meleeBasicTroops: MeleeBasicTroopsFixtures
+      let meleeBasicTroops: BasicTroopsFixtures
+      // let rangedBasicTroops: BasicTroopsFixtures
 
       beforeEach(() => {
-        const winnerMeleeTroop = strongBasicMeleeTroopFactory()
-        const looserMeleeTroop = weakBasicMeleeTroopFactory()
-        meleeBasicTroops = { winner: winnerMeleeTroop, looser: looserMeleeTroop }
+        const strongMeleeTroop = strongBasicMeleeTroopFactory()
+        const weakMeleeTroop = weakBasicMeleeTroopFactory()
+        meleeBasicTroops = { winner: strongMeleeTroop, looser: weakMeleeTroop }
+
+        // const strongRangedTroop = strongBasicRangedTroopFactory()
+        // const weakRangedTroop = weakBasicRangedTroopFactory()
+        // rangedBasicTroops = { winner: strongRangedTroop, looser: weakRangedTroop }
       })
 
-      it('Melee vs Melee Battle - Wins First', () => {
+      test('Melee vs Melee Battle - Wins First', () => {
         const { winner, time } = new Battle(meleeBasicTroops.winner, fightEngine).vs(meleeBasicTroops.looser)
 
         const { expectedFightTime, expectedWinnerHp } = expectedFightResults(meleeBasicTroops)
@@ -30,7 +38,7 @@ describe('Battle', () => {
         expect(time).toBe(expectedFightTime)
       })
 
-      it('Melee vs Melee Battle - Wins Second', () => {
+      test('Melee vs Melee Battle - Wins Second', () => {
         const { winner, time } = new Battle(meleeBasicTroops.looser, fightEngine).vs(meleeBasicTroops.winner)
 
         const { expectedFightTime, expectedWinnerHp } = expectedFightResults(meleeBasicTroops)
@@ -38,11 +46,18 @@ describe('Battle', () => {
         expect(time).toBe(expectedFightTime)
       })
 
-      // it('Melee vs Range Battle', () => {
-      //   const { winner, time } = new Battle(knight).vs(musketeer)
-      //   checkWinner(musketeer.name, 190, winner)
-      //   expect(time).toBe(7.7)
-      // })
+      test('Range vs Melee Battle - Wins First', () => {
+        const ranged = strongBasicRangedTroopFactory({ range: 3 })
+        const melee = strongBasicMeleeTroopFactory({ speed: 0.5 })
+        const rangeDamage = calculateDamagePerRange(ranged, melee)
+        const damagedMelee = basicTroopFactory({ ...melee, hp: melee.hp - rangeDamage })
+
+        const { winner, time } = new Battle(ranged, fightEngine).vs(melee)
+
+        const { expectedFightTime, expectedWinnerHp } = expectedFightResults({ winner: ranged, looser: damagedMelee })
+        checkWinner(ranged.name, expectedWinnerHp, winner)
+        expect(time).toBe(round(expectedFightTime + (rangeDamage / ranged.damage) * ranged.hitSpeed, 1))
+      })
     })
   })
 })

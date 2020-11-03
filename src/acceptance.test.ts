@@ -27,9 +27,9 @@ describe('Battle', () => {
         expect(time).toBe(5.4)
       })
 
-      it.skip('Melee vs Range Battle', () => {
+      it('Melee vs Range Battle', () => {
         const { winner, time } = new Battle(knight, fightEngine).vs(musketeer)
-        checkWinner(musketeer.name, 190, winner)
+        checkWinner(musketeer.name, 265, winner)
         expect(time).toBe(7.7)
       })
     })
