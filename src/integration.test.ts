@@ -37,7 +37,7 @@ describe('Battle', () => {
         expect(time).toBe(expectedFightTime)
       })
 
-      test('Range vs Melee Battle - Wins First', () => {
+      test.skip('Range vs Melee Battle - Wins First', () => {
         const ranged = basicGroundRangedTroopFactory({ range: 2, hp: 10000 })
         const melee = strongBasicGroundMeleeTroopFactory({ speed: 1 })
         const rangeDamage = calculateDamagePerRange(ranged, melee)

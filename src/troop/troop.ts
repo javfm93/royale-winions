@@ -31,6 +31,3 @@ interface TroopActions {
   reduceNextAttackTimeBy(time: number): void;
   receiveDamage(damage: number): void;
 }
-
-// airTroop
-// groundTroop

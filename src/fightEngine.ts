@@ -47,10 +47,9 @@ const calculateHitsToArrive = (attacker: Troop, defender: Troop) => {
   const defenderWillDie = completeHitsToArrive > hitsToDefeat
   const dealtHits = defenderWillDie ? hitsToDefeat : completeHitsToArrive
   const lastPartialHit = defenderWillDie ? 0 : hitsTillDefenderArrives - completeHitsToArrive
-  console.log({ dealtHits }, { completeHits: completeHitsToArrive })
-  console.log(`range difference: ${rangeToArrive}, time needed ${timeToStayInRange}`)
-  console.log(`range damage: ${attacker.name} did ${dealtHits * attacker.damage} in ${dealtHits} hits to ${defender.name}`)
-  console.log(`${dealtHits * attacker.hitSpeed} time for hits and having ${lastPartialHit * attacker.hitSpeed} extra time`)
+  console.log(`range damage:
+  ${attacker.name} did ${dealtHits * attacker.damage} in ${dealtHits} hits to ${defender.name}
+   in ${dealtHits * attacker.hitSpeed}s, ${lastPartialHit * attacker.hitSpeed}s to arrive`)
   return { dealtHits, lastPartialHit }
 }
 
@@ -91,7 +90,7 @@ const computeDamage = (attacker: Troop, defender: Troop): number => {
   defender.receiveDamage(attacker.damage)
   defender.reduceNextAttackTimeBy(timeToNextAttack)
   attacker.reduceNextAttackTimeBy(timeToNextAttack)
-  // console.log(`${attacker.name} Attacks, ${defender.name} hp is ${defender.currentHp}`)
+  console.log(`${attacker.name} Attacks, ${defender.name} hp is ${defender.currentHp}`)
   return timeToNextAttack
 }
 

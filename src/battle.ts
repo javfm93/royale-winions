@@ -23,6 +23,7 @@ export class Battle {
     while (local.isAlive && foreign.isAlive) {
       const iterationTime = this.fightEngine.fightIteration(local, foreign)
       this.time += iterationTime
+      console.log("~~~~~~~ iteration timecheck ~~~~~~", this.time)
     }
     return local.isAlive ? local : foreign
   }
