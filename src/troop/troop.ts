@@ -5,6 +5,11 @@ export enum Surface {
   Ground = "Ground"
 }
 
+export enum Target {
+  Air = 'Air',
+  Ground = "Ground"
+}
+
 export interface TroopProperties {
   name: string;
   hp: number;
@@ -12,7 +17,8 @@ export interface TroopProperties {
   damage: number;
   range: number;
   hitSpeed: number;
-  surface: Surface
+  surface: Surface;
+  target: Array<Target>
 }
 
 interface TroopComputedProperties {

@@ -2,11 +2,12 @@ import { fightEngine } from "./fightEngine"
 import {
   basicTroopFactory,
   strongBasicGroundMeleeTroopFactory,
+  strongBasicGroundRangedTroopFactory,
   weakBasicGroundRangedTroopFactory
 } from "../test/factories/troops"
 import { calculateDamagePerRange, calculateTimeToArrive } from "../test/helpers"
 import * as faker from "faker"
-import { Surface } from "./troop/troop"
+import { Surface, Target } from "./troop/troop"
 
 describe("fightEngine", () => {
   describe("Given 2 troops that are in range [fightIteration]", () => {
@@ -128,8 +129,8 @@ describe("fightEngine", () => {
   })
 
   describe("Given 2 troops with different range [computeDamagePerRange]", () => {
-    test("Troop with more range damage the other until it arrives", () => {
-      const ranged = weakBasicGroundRangedTroopFactory()
+    test("Troop with bigger range damage the other until it arrives", () => {
+      const ranged = weakBasicGroundRangedTroopFactory({ range: faker.random.number({ min: 2, max: 4 }) })
       const melee = strongBasicGroundMeleeTroopFactory()
 
       fightEngine.computeDamagePerRange(ranged, melee)
@@ -139,7 +140,7 @@ describe("fightEngine", () => {
     })
 
     test("Troop with more range damage the other until it arrives (reverse)", () => {
-      const ranged = weakBasicGroundRangedTroopFactory()
+      const ranged = weakBasicGroundRangedTroopFactory({ range: faker.random.number({ min: 2, max: 4 }) })
       const melee = strongBasicGroundMeleeTroopFactory()
 
       fightEngine.computeDamagePerRange(melee, ranged)
@@ -167,10 +168,10 @@ describe("fightEngine", () => {
     })
   })
 
-  describe("Given on air troop versus a ground melee troop", () => {
+  describe("Given an air troop versus a ground melee troop", () => {
     test("Ground troop is not able to hit air troop", () => {
-      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air })
-      const melee = basicTroopFactory({ hitSpeed: 0.5, surface: Surface.Ground })
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air, target: [Target.Air, Target.Ground] })
+      const melee = strongBasicGroundMeleeTroopFactory({ hitSpeed: 0.5 })
 
       fightEngine.fightIteration(air, melee)
 
@@ -179,13 +180,51 @@ describe("fightEngine", () => {
     })
 
     test("Ground troop is not able to hit air troop (reverse)", () => {
-      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air })
-      const melee = basicTroopFactory({ hitSpeed: 0.5, surface: Surface.Ground })
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air, target: [Target.Air, Target.Ground] })
+      const melee = strongBasicGroundMeleeTroopFactory({ hitSpeed: 0.5, surface: Surface.Ground })
 
       fightEngine.fightIteration(melee, air)
 
       expect(melee.currentHp).toBe(melee.hp - air.damage)
       expect(air.currentHp).toBe(air.hp)
+    })
+
+    test("The iteration returns the air attack speed", () => {
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air, target: [Target.Air, Target.Ground] })
+      const melee = strongBasicGroundMeleeTroopFactory({ hitSpeed: 0.5, surface: Surface.Ground })
+
+      const iterationTime = fightEngine.fightIteration(melee, air)
+
+      expect(iterationTime).toBe(air.hitSpeed)
+    })
+  })
+
+  describe('Given an air troop versus a ground ranged troop', () => {
+    test("Ground troop is able to hit air troop", () => {
+      const ranged = strongBasicGroundRangedTroopFactory({ hitSpeed: 0.5 })
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air, target: [Target.Air, Target.Ground] })
+
+      fightEngine.fightIteration(air, ranged)
+
+      expect(air.currentHp).toBe(air.hp - ranged.damage)
+    })
+
+    test("Ground troop is not able to hit air troop (reverse)", () => {
+      const ranged = strongBasicGroundRangedTroopFactory({ hitSpeed: 0.5 })
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air, target: [Target.Air, Target.Ground] })
+
+      fightEngine.fightIteration(ranged, air)
+
+      expect(air.currentHp).toBe(air.hp - ranged.damage)
+    })
+
+    test("The iteration returns the air attack speed", () => {
+      const ranged = strongBasicGroundRangedTroopFactory({ hitSpeed: 0.5 })
+      const air = basicTroopFactory({ hitSpeed: 1, surface: Surface.Air, target: [Target.Air, Target.Ground] })
+
+      const iterationTime = fightEngine.fightIteration(ranged, air)
+
+      expect(iterationTime).toBe(ranged.hitSpeed)
     })
   })
 })

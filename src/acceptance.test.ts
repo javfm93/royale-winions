@@ -8,11 +8,12 @@ import { fightEngine } from "./fightEngine"
 describe('Battle', () => {
   describe('One Card Battle', () => {
     describe('Individual troop', () => {
-      let miniPekka: Troop, knight: Troop, musketeer: Troop
+      let miniPekka: Troop, knight: Troop, musketeer: Troop, megaMinion: Troop
       beforeEach(() => {
         miniPekka = new BasicTroop(troops.miniPekka)
         knight = new BasicTroop(troops.knight)
         musketeer = new BasicTroop(troops.musketeer)
+        megaMinion = new BasicTroop(troops.megaMinion)
       })
 
       it('Melee vs Melee Battle - Wins First', () => {
@@ -31,6 +32,12 @@ describe('Battle', () => {
         const { winner, time } = new Battle(knight, fightEngine).vs(musketeer)
         checkWinner(musketeer.name, 265, winner)
         expect(time).toBe(7.7)
+      })
+
+      it('Melee vs Air Battle', () => {
+        const { winner, time } = new Battle(knight, fightEngine).vs(megaMinion)
+        checkWinner(megaMinion.name, megaMinion.hp, winner)
+        expect(time).toBe(7.5)
       })
     })
   })

@@ -1,4 +1,5 @@
 import { Troop } from '../../src/troop/troop'
+import { round } from "../../src/battle"
 
 interface MeleeBasicTroopsFixtures {
   winner: Troop, looser: Troop
@@ -28,10 +29,10 @@ export const expectedFightResults = ({ winner, looser }: MeleeBasicTroopsFixture
 export const calculateDamagePerRange = (ranged: Troop, melee: Troop): number => {
   const timeToStayInRange = calculateTimeToArrive(ranged, melee)
   const hitsTillDefenderArrives = Math.floor(timeToStayInRange / ranged.hitSpeed)
-  return hitsTillDefenderArrives * ranged.damage
+  return round(hitsTillDefenderArrives * ranged.damage, 2)
 }
 
 export const calculateTimeToArrive = (ranged: Troop, melee: Troop): number => {
   const rangeToArrive = ranged.range - melee.range
-  return rangeToArrive / melee.speed
+  return round(rangeToArrive / melee.speed, 2)
 }
