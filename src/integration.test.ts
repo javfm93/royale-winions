@@ -7,7 +7,7 @@ import {
 } from "../test/factories/troops"
 import { calculateDamagePerRange, checkWinner, expectedFightResults } from "../test/helpers"
 import { Surface, Target, Troop } from "./troop/troop"
-import { fightEngine } from "./fightEngine"
+import { defaultFightEngine } from "./defaultFightEngine"
 
 interface BasicTroopsFixtures {
   winner: Troop, looser: Troop
@@ -30,7 +30,7 @@ describe('Battle', () => {
       })
 
       test('Melee vs Melee Battle - Wins First', () => {
-        const { winner, time } = new Battle(meleeBasicTroops.winner, fightEngine).vs(meleeBasicTroops.looser)
+        const { winner, time } = new Battle(meleeBasicTroops.winner, defaultFightEngine).vs(meleeBasicTroops.looser)
 
         const { expectedFightTime, expectedWinnerHp } = expectedFightResults(meleeBasicTroops)
         checkWinner(meleeBasicTroops.winner.name, expectedWinnerHp, winner)
@@ -43,7 +43,7 @@ describe('Battle', () => {
         const rangeDamage = calculateDamagePerRange(ranged, melee)
         const damagedMelee = basicTroopFactory({ ...melee, hp: melee.hp - rangeDamage })
 
-        const { winner, time } = new Battle(ranged, fightEngine).vs(melee)
+        const { winner, time } = new Battle(ranged, defaultFightEngine).vs(melee)
 
         const expectedMeleeTimeToReachRanged = (rangeDamage / ranged.damage) * ranged.hitSpeed
         const { expectedFightTime, expectedWinnerHp } = expectedFightResults({ winner: ranged, looser: damagedMelee })
@@ -55,7 +55,7 @@ describe('Battle', () => {
         const air = basicTroopFactory({ surface: Surface.Air, target: [Target.Ground, Target.Air], range: 9 })
         const melee = strongBasicGroundMeleeTroopFactory({ speed: 0.5 })
 
-        const { winner, time } = new Battle(air, fightEngine).vs(melee)
+        const { winner, time } = new Battle(air, defaultFightEngine).vs(melee)
 
         const expectedTime = round(Math.ceil(melee.hp / air.damage) * air.hitSpeed, 1)
         checkWinner(air.name, air.hp, winner)

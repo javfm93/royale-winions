@@ -1,4 +1,4 @@
-import { Surface, Target, Troop } from './troop'
+import { Surface, Target, Troop, TroopProperties } from './troop'
 
 export class BasicTroop implements Troop {
   name: string;
@@ -9,18 +9,22 @@ export class BasicTroop implements Troop {
   currentHp: number;
   nextAttack: number;
   speed: number;
-  surface: Surface
-  target: Array<Target>
+  surface: Surface;
+  target: Array<Target>;
+  isOnBattle: boolean;
 
-  constructor({ hp, damage, name, hitSpeed, range, speed, surface, target }) {
-    this.name = name
-    this.currentHp = this.hp = hp
-    this.damage = damage
-    this.nextAttack = this.hitSpeed = hitSpeed
-    this.range = range
-    this.speed = speed
-    this.surface = surface
-    this.target = target
+  constructor(props: TroopProperties) {
+    this.name = props.name
+    this.hp = props.hp
+    this.damage = props.damage
+    this.hitSpeed = props.hitSpeed
+    this.range = props.range
+    this.speed = props.speed
+    this.surface = props.surface
+    this.target = props.target
+    this.currentHp = props.hp
+    this.nextAttack = props.hitSpeed
+    this.isOnBattle = false
   }
 
   public reduceNextAttackTimeBy(time: number): void {

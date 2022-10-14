@@ -1,62 +1,70 @@
-import { Battle } from './battle'
+import { Battle, BattleComponent } from './battle'
 import { BasicTroop } from './troop/basicTroop'
-import { Troop } from './troop/troop'
+import { TroopProperties } from './troop/troop'
 import troops from "../test/factories/troops"
 import { checkWinner } from "../test/helpers"
-import { fightEngine } from "./fightEngine"
+
+const createBattleComponentOfTroop = (troop: TroopProperties, position: number) => ({
+  troop: new BasicTroop(troop),
+  position
+})
 
 describe('Battle', () => {
   describe('One Card Battle', () => {
     describe('Individual troop', () => {
-      let miniPekka: Troop,
-        knight: Troop,
-        musketeer: Troop,
-        megaMinion: Troop,
-        bomber: Troop,
-        babyDragon: Troop
+      let miniPekka: BattleComponent,
+        knight: BattleComponent,
+        musketeer: BattleComponent,
+        megaMinion: BattleComponent,
+        bomber: BattleComponent,
+        babyDragon: BattleComponent
 
       beforeEach(() => {
-        miniPekka = new BasicTroop(troops.miniPekka)
-        knight = new BasicTroop(troops.knight)
-        musketeer = new BasicTroop(troops.musketeer)
-        megaMinion = new BasicTroop(troops.megaMinion)
-        bomber = new BasicTroop(troops.bomber)
-        babyDragon = new BasicTroop(troops.babyDragon)
+        miniPekka = createBattleComponentOfTroop(troops.miniPekka, 0)
+        knight = createBattleComponentOfTroop(troops.knight, 1)
+        musketeer = createBattleComponentOfTroop(troops.musketeer, troops.musketeer.range)
+        megaMinion = createBattleComponentOfTroop(troops.megaMinion, 0)
+        bomber = createBattleComponentOfTroop(troops.bomber, troops.bomber.range)
+        babyDragon = createBattleComponentOfTroop(troops.babyDragon, troops.babyDragon.range)
       })
 
       it('Melee vs Melee Battle', () => {
-        const { winner, time } = new Battle(miniPekka, fightEngine).vs(knight)
-        checkWinner(miniPekka.name, 300, winner)
+        const { winner, time } = new Battle().of(miniPekka).vs(knight)
+
+        checkWinner(miniPekka.troop.name, 300, winner)
         expect(time).toBe(5.4)
       })
 
       it('Melee vs Range Battle', () => {
-        const { winner, time } = new Battle(knight, fightEngine).vs(musketeer)
-        checkWinner(musketeer.name, 265, winner)
+        const { winner, time } = new Battle().of(knight).vs(musketeer)
+
+        checkWinner(musketeer.troop.name, 265, winner)
         expect(time).toBe(7.7)
       })
 
       it('Melee vs Air Battle', () => {
-        const { winner, time } = new Battle(knight, fightEngine).vs(megaMinion)
-        checkWinner(megaMinion.name, megaMinion.hp, winner)
+        const { winner, time } = new Battle().of(knight).vs(megaMinion)
+
+        checkWinner(megaMinion.troop.name, megaMinion.troop.hp, winner)
         expect(time).toBe(7.5)
       })
 
       it('Ranged vs Ranged Battle', () => {
-        const { winner, time } = new Battle(musketeer, fightEngine).vs(bomber)
-        checkWinner(musketeer.name, musketeer.hp, winner)
+        const { winner, time } = new Battle().of(musketeer).vs(bomber)
+
+        checkWinner(musketeer.troop.name, musketeer.troop.hp, winner)
         expect(time).toBe(2.2)
       })
 
       it('Ranged vs Air Battle', () => {
-        const { winner, time } = new Battle(musketeer, fightEngine).vs(megaMinion)
-        checkWinner(musketeer.name, musketeer.hp, winner)
+        const { winner, time } = new Battle().of(musketeer).vs(megaMinion)
+        checkWinner(musketeer.troop.name, musketeer.troop.hp, winner)
         expect(time).toBe(4.4)
       })
 
       it('Air vs Air Battle', () => {
-        const { winner, time } = new Battle(babyDragon, fightEngine).vs(megaMinion)
-        checkWinner(babyDragon.name, 506, winner)
+        const { winner, time } = new Battle().of(babyDragon).vs(megaMinion)
+        checkWinner(babyDragon.troop.name, 506, winner)
         expect(time).toBe(6.4)
       })
     })

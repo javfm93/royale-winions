@@ -6,7 +6,8 @@ export interface FightEngine {
   computeDamagePerRange: (local: Troop, foreign: Troop) => number
 }
 
-const computeDamagePerRange = (local: Troop, foreign: Troop): number => {
+// todo: calculate damage if distance is lower than range
+const computeDamagePerRange = (local: Troop, foreign: Troop, distance = local.range): number => {
   const rangeDiff = local.range - foreign.range
   return rangeDiff > 0
     ? executeRangeDamage(local, foreign)
@@ -35,7 +36,7 @@ const executeRangeDamage = (attacker: Troop, defender: Troop): number => {
   const { dealtHits, lastPartialHit } = calculateHitsToArrive(attacker, defender)
   executeRangeHits(attacker, defender, dealtHits)
   attacker.reduceNextAttackTimeBy(lastPartialHit * attacker.hitSpeed)
-  return round((dealtHits + lastPartialHit) * attacker.hitSpeed, 2)
+  return round((dealtHits + lastPartialHit) * attacker.hitSpeed, 2) // todo remove this round
 }
 
 const calculateHitsToArrive = (attacker: Troop, defender: Troop) => {
@@ -94,4 +95,4 @@ const computeDamage = (attacker: Troop, defender: Troop): number => {
   return timeToNextAttack
 }
 
-export const fightEngine: FightEngine = { fightIteration, computeDamagePerRange }
+export const defaultFightEngine: FightEngine = { fightIteration, computeDamagePerRange }

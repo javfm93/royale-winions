@@ -24,7 +24,8 @@ export interface TroopProperties {
 interface TroopComputedProperties {
   nextAttack: number;
   isAlive: boolean;
-  currentHp: number
+  currentHp: number;
+  isOnBattle: boolean
 }
 
 interface TroopActions {

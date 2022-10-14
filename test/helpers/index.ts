@@ -32,7 +32,7 @@ export const calculateDamagePerRange = (ranged: Troop, melee: Troop): number => 
   return round(hitsTillDefenderArrives * ranged.damage, 2)
 }
 
-export const calculateTimeToArrive = (ranged: Troop, melee: Troop): number => {
-  const rangeToArrive = ranged.range - melee.range
-  return round(rangeToArrive / melee.speed, 2)
+export const calculateTimeToArrive = (ranged: Troop, melee: Troop, distance: number = ranged.range): number => {
+  const distanceToArrive = ranged.range > distance ? ranged.range - melee.range : distance
+  return round(distanceToArrive / melee.speed, 2)
 }

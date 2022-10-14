@@ -1,6 +1,7 @@
 import { BasicTroop } from "../../src/troop/basicTroop"
 import * as faker from "faker"
 import { Surface, Target, Troop, TroopProperties } from "../../src/troop/troop"
+import { BattleComponent } from "../../src/battle"
 
 enum HP {
   MAX = 2000,
@@ -82,7 +83,16 @@ export const weakBasicGroundRangedTroopFactory = (props: Partial<TroopProperties
   return basicGroundRangedTroopFactory({ ...props, ...strongProps })
 }
 
-export default {
+export const battleComponentFactory = (props: Partial<BattleComponent> = {}): BattleComponent => {
+  const defaultProps = {
+    troop: basicTroopFactory(),
+    position: faker.random.number({ min: 0, max: 9 })
+  }
+
+  return { ...defaultProps, ...props }
+}
+
+const officialTroops = {
   knight: {
     name: 'knight',
     cost: 3,
@@ -93,8 +103,8 @@ export default {
     radius: 1,
     hitSpeed: 1.1,
     damagePerSecond: 68,
-    surface: 'Ground',
-    target: 'Ground',
+    surface: Surface.Ground,
+    target: [Target.Ground],
     range: 1,
     speed: 0.875,
     deployTime: 1,
@@ -110,8 +120,8 @@ export default {
     radius: 1,
     hitSpeed: 1.8,
     damagePerSecond: 180,
-    surface: 'Ground',
-    target: 'Ground',
+    surface: Surface.Ground,
+    target: [Target.Ground],
     range: 1,
     speed: 0.625,
     deployTime: 1,
@@ -127,8 +137,8 @@ export default {
     radius: 1,
     hitSpeed: 1.5,
     damagePerSecond: 98,
-    surface: 'Air',
-    target: ['Ground', 'Air'],
+    surface: Surface.Air,
+    target: [Target.Ground, Target.Air],
     range: 1,
     speed: 0.875,
     deployTime: 1,
@@ -144,8 +154,8 @@ export default {
     radius: 1,
     hitSpeed: 1.1,
     damagePerSecond: 90,
-    surface: 'Ground',
-    target: ['Ground', 'Air'],
+    surface: Surface.Ground,
+    target: [Target.Ground, Target.Air],
     range: 6,
     speed: 0.875,
     deployTime: 1,
@@ -161,8 +171,8 @@ export default {
     radius: 3,
     hitSpeed: 1.9,
     damagePerSecond: 67,
-    surface: 'Ground',
-    target: 'Ground',
+    surface: Surface.Ground,
+    target: [Target.Ground],
     range: 4.5,
     speed: 0.875,
     deployTime: 1,
@@ -178,8 +188,8 @@ export default {
     radius: 3,
     hitSpeed: 1.6,
     damagePerSecond: 62,
-    surface: 'Air',
-    target: ['Ground', 'Air'],
+    surface: Surface.Air,
+    target: [Target.Ground, Target.Air],
     range: 3.5,
     speed: 0.625,
     deployTime: 1,
@@ -195,8 +205,8 @@ export default {
     radius: 1,
     hitSpeed: 1,
     damagePerSecond: 32,
-    surface: 'Ground',
-    target: 'Ground',
+    surface: Surface.Ground,
+    target: [Target.Ground],
     range: 1,
     speed: 0.625,
     deployTime: 1,
@@ -212,8 +222,8 @@ export default {
     radius: 1,
     hitSpeed: 1.1,
     damagePerSecond: 45,
-    surface: 'Ground',
-    target: 'Ground',
+    surface: Surface.Ground,
+    target: [Target.Ground],
     range: 1,
     speed: 0.375,
     deployTime: 1,
@@ -229,8 +239,8 @@ export default {
     radius: 1,
     hitSpeed: 1,
     damagePerSecond: 40,
-    surface: 'Air',
-    target: ['Ground', 'Air'],
+    surface: Surface.Air,
+    target: [Target.Ground, Target.Air],
     range: 2,
     speed: 0.625,
     deployTime: 1,
@@ -246,8 +256,8 @@ export default {
     radius: 1,
     hitSpeed: 1.1,
     damagePerSecond: 90,
-    surface: 'Ground',
-    target: ['Ground', 'Air'],
+    surface: Surface.Ground,
+    target: [Target.Ground, Target.Air],
     range: 6,
     speed: 0.875,
     deployTime: 1,
@@ -263,11 +273,13 @@ export default {
     radius: 1,
     hitSpeed: 1.5,
     damagePerSecond: 50,
-    surface: 'Ground',
-    target: 'Ground',
+    surface: Surface.Ground,
+    target: [Target.Ground],
     range: 1,
     speed: 0.875,
     deployTime: 1,
     count: 4,
   },
 }
+
+export default officialTroops
